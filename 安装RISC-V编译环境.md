@@ -1,0 +1,157 @@
+## 安装RISC-V编译环境
+
+### 环境要求
+
+我们需要Ubuntu系统，来进行环境配置，其他的Linux版本，可以仿照此来进行。然后需要一些基础的库。
+
+`sudo apt install python gcc autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev make cmake`
+
+再选择一个目录，作为RISC-V编译程序的存放位置。然后设置环境变量，此处的`~/RISCV`可以替换。
+
+`RISCV=~/RISCV`
+
+我们生成的是64位的版本，32位的请参考源代码相应的手册。
+
+### 注意事项
+
+如果源代码下载很慢，请自行学习科学上网。
+
+如果源代码编译失败，请考虑增加你的物理内存（或者学习如何增加虚拟内存），并将`make -j $(nproc)`全部改为`make`。
+
+### riscv-gnu-toolchain
+
+这是一个交叉编译的工具链，能让我们在x86架构的CPU下，生成RISC-V的程序。
+
+首先便是下载源代码：
+
+```shell
+git clone --recursive https://github.com/riscv/riscv-gnu-toolchain.git
+```
+
+然后对源代码进行编译，创建一个目录build，用以存放生成的编译程序（newlib和linux是两个不同的函数库，可以选择一个）：
+
+```shell
+cd riscv-gnu-toolchain
+mkdir build/newlib build/linux
+cd build
+```
+
+构建函数库，可以`configure --with-arch=rv32gc --with-abi=ilp32d`来生成RISC-V特定版本的编译器。
+
+构建newlib函数库：
+
+```shell
+cd newlib
+../../configure --prefix=$RISCV/newlib
+make -j $(nproc)
+cd ..
+```
+
+构建linux函数库
+
+```shell
+mkdir linux
+cd linux
+../../configure --prefix=$RISCV/linux
+make -j $(nproc) linux
+cd ..
+```
+
+至此，我们已经可以编译C/C++程序了。
+
+在`$RISCV/newlib`或`$RISCV/linux`下的`bin`里面，我们可以看到`riscv64-unknown-elf-gcc`和`riscv64-unknown-elf-g++`（或
+
+`riscv64-unknown-linux-gnu-gcc`和`riscv64-unknown-linux-gnu-g++`）的编译器，其用法和`gcc`与`g++`无异。
+
+### qemu
+
+这个是一个模拟器，代码已经被包含在`riscv-gnu-toolchain`里面。
+
+开始构建。
+
+```shell
+cd qemu
+mkdir build
+../configure --target-list=riscv64-softmmu,riscv64-linux-user --prefix=$RISCV/qemu
+make -j $(nproc)
+```
+
+在`$RISCV/qemu/bin`里面，可以看到`qemu-riscv64`，可以运行上述交叉编译器生成的程序。
+
+### riscv-isa-sim（可选）
+
+这是另外一个模拟器spike，依旧是先下载源代码：
+
+```shell
+git clone https://github.com/riscv/riscv-isa-sim.git
+```
+
+然后编译为两个版本：
+
+```shell
+cd riscv-isa-sim
+mkdir build
+cd build
+
+../configure --prefix=$RISCV/newlib
+make -j $(nproc)
+make install
+
+../configure --prefix=$RISCV/linux
+make -j $(nproc)
+make install
+```
+
+可以在`$RISCV/newlib`或`$RISCV/linux`下的`bin`里面，看到我们的`spike`程序。
+
+### riscv-isa-sim（可选）
+
+spike需要pk，才能运行RISC-V程序。
+
+下载源代码：
+
+```shell
+git clone https://github.com/riscv/riscv-pk.git
+```
+
+编译：
+
+```shell
+mkdir -p build/newlib build/linux
+cd build
+
+cd newlib
+../../configure --prefix=$RISCV/newlib --host=$RISCV/bin/riscv64-unknown-elf
+make -j $(nproc)
+make install
+cd ..
+
+cd linux
+../../configure --prefix=$RISCV/linux --host=$RISCV/bin/riscv64-unknown-linux-gnu
+make -j $(nproc)
+make install
+cd ..
+```
+
+### llvm（可选）
+
+这是另外一个编译器，clang便是llvm中的子项目。
+
+首先下载源代码：
+
+```shell
+git clone https://github.com/llvm/llvm-project.git
+```
+
+然后编译源代码：
+
+```shell
+cd llvm-project
+
+mkdir build
+cd build
+cmake -DLLVM_TARGETS_TO_BUILD="X86;RISCV" -DLLVM_ENABLE_PROJECTS="clang;llvm" -DCMAKE_INSTALL_PREFIX=$RISCV/llvm ../llvm
+make -j $(nproc)
+```
+
+我们可以在`$RISCV/llvm/bin`中找到`clang`，这个便是我们的编译器了。

@@ -7,6 +7,7 @@
 - [安装RISC-V编译环境](安装RISC-V编译环境.md)
 - [例程1：hello world!](例程1：hello_world!.md)
 - [例程2：add](例程2：add.md)
+- [汇编语言的语法](汇编语言的语法.md)
 - [RISC-V版本](RISC-V版本.md)
 - [RISC-V寄存器](RISC-V寄存器.md)
 - [指令类型](指令类型.md)

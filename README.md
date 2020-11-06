@@ -11,7 +11,7 @@
 - [RISC-V版本](RISC-V版本.md)
 - [RISC-V寄存器](RISC-V寄存器.md)
 - [指令类型](指令类型.md)
-- [add](add.md)
+- [算术指令](算术指令.md)
 - [sub](sub.md)
 
 ## 待办

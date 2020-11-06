@@ -1,19 +1,21 @@
+
+
 ## RISC-V寄存器
 
-| Register | ABI Name | Description                        |
-| -------- | -------- | ---------------------------------- |
-| x0       | zero     | Hard-wired zero                    |
-| x1       | ra       | Return address                     |
-| x2       | sp       | Stack pointer                      |
-| x3       | gp       | Global pointer                     |
-| x4       | tp       | Thread pointer                     |
-| x5-7     | t0-2     | Temporaries                        |
-| x8       | s0/fp    | Saved register / Frame pointer     |
-| x9       | s1       | Saved register                     |
-| x10-11   | a0-1     | Function arguments / Return values |
-| x12-17   | a2-7     | Function arguments                 |
-| x18-27   | s2-11    | Saved registers                    |
-| x28-31   | t3-6     | Temporaries                        |
+| 寄存器 | ABI 名称 | 描述                             |
+| ------ | -------- | ------------------------------ |
+| x0     | zero     | Hard-wired zero                |
+| x1     | ra       | Return address                 |
+| x2     | sp       | Stack pointer                  |
+| x3     | gp       | Global pointer                 |
+| x4     | tp       | Thread pointer                 |
+| x5-7   | t0-2     | Temporaries                    |
+| x8     | s0/fp    | Saved register / Frame pointer |
+| x9     | s1       | Saved register                 |
+| x10-11 | a0-1     | 函数参数 / 返回值              |
+| x12-17 | a2-7     | 函数参数                       |
+| x18-27 | s2-11    | Saved registers                |
+| x28-31 | t3-6     | 临时                           |
 
 | Register | ABI Name | Description                  |
 | -------- | -------- | ---------------------------- |
